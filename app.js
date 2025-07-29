@@ -2,14 +2,14 @@ var createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
-const logger = require('morgan');
 const { engine } = require('express-handlebars');
 const handlebars = require('handlebars');
 const session = require('express-session');
-const dotenv = require('dotenv').config();
 const crypto = require('crypto');
 const filter = require("handlebars.filter");
+const bodyParser = require('body-parser');
 
+const {config, log} = require('./settings');
 const routes = require('./routes');
 const NavLinkService = require('./services/NavLinkService');
 
@@ -32,12 +32,19 @@ app.engine('hbs', engine({
 
 filter.registerHelper(handlebars);
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser('WebhookManager'));
+//app.use(express.json());
+//app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser('WebhookManager', config.cookie_secret));
 
-app.use(session({ name: crypto.createHash('md5').update(process.env.NAME).digest("hex"), cookie: { maxAge: 60 *1000 * 1000 /* 1h */ }}))
+var options = {
+    inflate: true,
+    limit: '100kb',
+    type: 'application/octet-stream'
+  };
+app.use(bodyParser.raw(options));
+
+
+app.use(session({ name: crypto.createHash('md5').update(config.app_name).digest("hex"), cookie: { maxAge: 60 *1000 * 1000 /* 1h */ }}))
 
 app.use('/', routes);
 app.use('/', express.static(path.join(__dirname, 'public')));

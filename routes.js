@@ -7,7 +7,7 @@ const userRouter = require('./routes/user');
 const webhookRouter = require('./routes/webhook');
 const auth = require('./middleware/auth');
 
-router.use('/webhook', webhookRouter);
+router.use('/callback', webhookRouter);
 router.use('/', indexRouter);
 router.use('/user', auth, userRouter);
 router.use('/', loginRouter);
