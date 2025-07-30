@@ -1,0 +1,62 @@
+<div class="card shadow-sm">
+    <div class="card-header">
+        <div class="d-flex justify-content-between">
+            <span style="display: flex; justify-content: flex-left" aria-hidden="true">
+                Id:&nbsp; <a href="/user/subscriptions/{{ id }}">{{  subscription.id }}</a>
+            </span>
+        </div>
+    </div>
+    <div class="card-body">
+
+        <div class="card-title">
+            <span style="display: flex; justify-content: flex-left" aria-hidden="true">
+            Subscription details
+            </span>
+        </div>
+        <div class="card-text">
+            <span>
+                <small class="text-muted">Callback</small>
+            </span>
+            <span>{{  subscription.callback }}</span>
+        </div>
+        <div class="card-text">
+            <span>
+                <small class="text-muted">Topic</small>
+            </span>
+            <span>{{ subscription.topic }}</span>
+        </div>
+        <div class="card-text">
+            <span>
+                <small class="text-muted">Content Type:</small>
+            </span>
+            <span>{{ subscription.content_type }}</span>
+        </div>
+        <div class="card-text">
+            <span>
+                <small class="text-muted">Lease Seconds:</small>
+            </span>
+            <span>{{ subscription.lease_seconds }}</span>
+        </div>
+        <div class="card-text">
+            <span>
+                <small class="text-muted">Secret:</small>
+            </span>
+            <span>{{ subscription.secret }}</span>
+        </div>
+        <div class="card-text">
+            <span>
+                <small class="text-muted">Function:</small>
+            </span>
+            <span>{{ subscription.function }}(.js)</span>
+        </div>
+        <div class="card-text">
+            <span>
+                <small class="text-muted">State:</small>
+            </span>
+            <span>{{ subscription.state }}</span>
+        </div>
+    </div>
+    <div class="card-footer">
+        
+    </div>
+</div>

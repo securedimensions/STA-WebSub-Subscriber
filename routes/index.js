@@ -4,12 +4,11 @@ const NavLinkService = require('../services/NavLinkService');
 const crypto = require('crypto');
 
 const navLinkService = new NavLinkService();
-navLinkService.registerCustomLinks([
-  { "label": "About", "url": "/about" }
-]);
 
 router.use(function (req, res, next) {
-    navLinkService.clearLinkClasses();
+      navLinkService.registerNavLinks([
+    { "label": "Subscriptions", "url": "/user/subscriptions" }
+  ]);
     navLinkService.setNavLinkActive('/');
     next();
 });

@@ -8,7 +8,7 @@ log.setLevel(["debug","DEBUG"].indexOf(process.env.LOG_LEVEL) ?  log.levels.DEBU
 module.exports = {
     "config": {
         "port": process.env.PORT || 3000,
-        "root_url": process.env.SUBSCRIBER_ROOT_URL || 'http://localhost:3000/callback/', // must have / at the end!
+        "root_url": process.env.ROOT_URL || 'http://localhost:3000/callback/', // must have / at the end!
         "hub_url": process.env.HUB_URL || 'http://localhost:4000/api/subscriptions',
         "lease_seconds": process.env.LEASE_SECONDS || 300,
         "lease_skew_seconds": process.env.LEASE_SKEW_SECONDS || 10,

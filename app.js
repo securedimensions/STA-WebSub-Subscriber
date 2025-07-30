@@ -26,9 +26,14 @@ app.engine('hbs', engine({
   partialsDir: [
     path.join(__dirname, '/views/partials'),
     path.join(__dirname, '/views/partials/home'),
+    path.join(__dirname, '/views/partials/subscription')
   ]
 }));
 
+handlebars.registerHelper('eq', function (arg1, arg2, options) {
+    if (arg1 == arg2) { return options.fn(this); }
+    return options.inverse(this);
+});
 
 filter.registerHelper(handlebars);
 
@@ -42,7 +47,7 @@ var options = {
     type: 'application/octet-stream'
   };
 app.use(bodyParser.raw(options));
-
+app.use(express.urlencoded());
 
 app.use(session({ name: crypto.createHash('md5').update(config.app_name).digest("hex"), cookie: { maxAge: 60 *1000 * 1000 /* 1h */ }}))
 

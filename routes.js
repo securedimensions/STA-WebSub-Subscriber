@@ -9,8 +9,8 @@ const auth = require('./middleware/auth');
 
 router.use('/callback', webhookRouter);
 router.use('/', indexRouter);
-router.use('/user', auth, userRouter);
 router.use('/', loginRouter);
-
+//router.use('/user', userRouter);
+router.use('/user', auth, userRouter);
 
 module.exports = router;

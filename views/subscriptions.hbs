@@ -1,0 +1,11 @@
+<div class="content">
+    {{#if subscriptions}}
+    <div class="card-rows">
+        {{#each subscriptions}}
+        {{> subscription_card subscription=this}}
+        {{/each}}
+    </div>
+    {{else}}
+    {{> empty_list }}
+    {{/if}}
+</div>

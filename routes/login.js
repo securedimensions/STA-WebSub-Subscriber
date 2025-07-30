@@ -46,7 +46,6 @@ router.post("/login",
             res.status(200).redirect(decodeURIComponent(back));
         } else {
             req.errors = errors.array();
-            const NavLinkService = require('../services/NavLinkService');
             return res.render('login', {
                 agentName: process.env.NAME,
                 navLinks: navLinkService.getNavLinks(),

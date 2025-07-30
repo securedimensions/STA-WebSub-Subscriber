@@ -1,10 +1,8 @@
 class NavLinkService {
     constructor() {
-        this.navLinks = [
-            {
-                "label": "Webhooks",
-                "url": "/webhooks"
-            }
+        this.navLinks = [];
+        this.customNavLinks = [
+            { "label": "About", "url": "/about" }
         ];
     }
 
@@ -18,6 +16,10 @@ class NavLinkService {
 
     registerCustomLinks(links) {
         this.customNavLinks = links;
+    }
+
+    registerNavLinks(links) {
+        this.navLinks = links;
     }
 
     clearLinkClasses() {

@@ -11,12 +11,8 @@ catch (err) {}
 
 const getSubscriptions = async function () {
     return new Promise((resolve, reject) => {
-        db.all('SELECT * FROM subscriptions', (err, rows) => {
-            if (err)
-                reject(err);
-            else
-                resolve(rows);
-        });
+        const stmt = db.prepare('SELECT * FROM subscriptions');
+        resolve(stmt.all());
     });
 }
 
@@ -27,10 +23,10 @@ const getSubscription = function (id) {
     });
 }
 
-const updateSubscription = function(id, secret, lease_seconds) {
+const updateSubscription = function(id, secret, lease_seconds, state) {
     return new Promise((resolve, reject) => {
-        const stmt = db.prepare('UPDATE subscriptions SET secret=?, lease_seconds=? WHERE id=? RETURNING *');
-        resolve(stmt.run(secret, lease_seconds, id));
+        const stmt = db.prepare('UPDATE subscriptions SET secret=?, lease_seconds=?, state=? WHERE id=? RETURNING *');
+        resolve(stmt.run(secret, lease_seconds, state, id));
     });
 };
 
@@ -41,4 +37,11 @@ const removeSubscription = function(id) {
     });
 }
 
-module.exports = { getSubscriptions, getSubscription, updateSubscription, removeSubscription }
+const newSubscription = function(subscription) {
+    return new Promise((resolve, reject) => {
+        const stmt = db.prepare('INSERT INTO subscriptions (id, content_type, callback, topic, secret, lease_seconds, function, state) VALUES(?,?,?,?,?,?,?,?) RETURNING *');
+        resolve(stmt.run(subscription.id, subscription.content_type, subscription.callback, subscription.topic, subscription.secret, subscription.lease_seconds, subscription.function, subscription.state));
+    });
+};
+
+module.exports = { getSubscriptions, getSubscription, updateSubscription, removeSubscription, newSubscription }

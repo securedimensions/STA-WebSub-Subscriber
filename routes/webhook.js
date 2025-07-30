@@ -53,6 +53,7 @@ router.post('/:id', validationOfNotification, async function(req, res, next) {
             if (hash !== res.locals.x_hub_value) {
                 log.error("ignoring message because X-Hub-Signature is wrong");
             } else {
+                log.debug("hmac match");
                 require('../callbacks/' + subscription.function).call(body);
             }
             return res.status(200).end();
