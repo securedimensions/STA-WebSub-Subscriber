@@ -24,11 +24,14 @@ router.get('/:id', validationOfIntent, async function(req, res, next) {
     // at this point, the validation of intent has passed successfully
     // Option 1: The Hub renews an existing subscription -> update secret and lease_seconds
     // Option 2: The Hub asks for unsubscription -> check if the subscription is marked for removal (subscription.state == unsubscribe) was already done in the middleware
+    // Option 3: The Hub denied a previous subscription request -> remove subscription
     log.debug("mode: ", res.locals.mode);
     if (res.locals.mode === 'subscribe') {
         const updated_subscription = await updateSubscription(id, res.locals.secret, res.locals.lease_seconds);
         log.debug('updated_subscription: ', updated_subscription);
     } else if (res.locals.mode === 'unsubscribe') {
+        await removeSubscription(id);
+    } else if (res.locals.mode === 'denied') {
         await removeSubscription(id);
     }
     return res.status(200).type('text').send(res.locals.challenge);
