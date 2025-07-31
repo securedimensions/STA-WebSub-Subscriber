@@ -97,10 +97,9 @@
                 <select id="State" name="state"
                     class="custom-select {{#filter error_keys "state"}}is-invalid{{/filter}}"
                     value="{{ subscription.state }}">
-                    <option disabled value="">Select a State</option>
+                    <option disabled selected value="">Select a State</option>
                     {{#each states}}
-                    <option {{#eq value ../subscription.state}}selected{{/eq}}
-                        value="{{value}}">{{key}}</option>
+                        <option value="{{value}}">{{key}}</option>
                     {{/each}}
                 </select>
                 {{#each errors}}

@@ -11,8 +11,6 @@ const path = require('path');
 
 const navLinkService = new NavLinkService();
 
-const states = [{ 'key': 'active', 'value': 1 }, { 'key': 'allow unsubscribe', 'value': 2 }];
-
 /* GET user home page. */
 router.get('/', async function (req, res, next) {
   res.redirect('/user/subscriptions');
@@ -43,6 +41,7 @@ router.get('/subscriptions/new', async function (req, res, next) {
   const root_url = (config.root_url.endsWith('/')) ? config.root_url : config.root_url + '/';
   const subscription = { 'id': uuid, 'callback': root_url + 'callback/' + uuid, 'state': 0 };
   navLinkService.setNavLinkActive('/user/subscriptions/new');
+  const states = [{ 'key': 'inactive', 'value': 0 }, { 'key': 'active', 'value': 1 }];
   res.render('subscription_new', {
     agentName: process.env.APP_NAME,
     navLinks: navLinkService.getNavLinks(),
@@ -106,6 +105,7 @@ router.get('/subscriptions/:id', async function (req, res, next) {
     { "label": "New", "url": "/user/subscriptions/new" }
   ]);
   const subscription = await getSubscription(req.params.id);
+  const states = [{ 'key': 'inactive', 'value': 0 }, { 'key': 'active', 'value': 1 }, { 'key': 'allow unsubscribe', 'value': 2 }];
   res.render('subscription_update', {
     agentName: process.env.APP_NAME,
     navLinks: navLinkService.getNavLinks(),
@@ -119,6 +119,7 @@ router.get('/subscriptions/:id', async function (req, res, next) {
 router.post('/subscriptions/:id', async function (req, res, next) {
   await updateSubscription(req.params.id, req.body.secret, req.body.lease_seconds, req.body.state);
   const subscription = await getSubscription(req.params.id);
+  const states = [{ 'key': 'inactive', 'value': 0 }, { 'key': 'active', 'value': 1 }, { 'key': 'allow unsubscribe', 'value': 2 }];
   res.render('subscription_update', {
     agentName: process.env.APP_NAME,
     navLinks: navLinkService.getNavLinks(),

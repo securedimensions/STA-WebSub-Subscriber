@@ -5,6 +5,7 @@ const { log } = require('../settings');
 
 var Enum = require('enum');
 var subscription_state = new Enum({
+ 'inactive': 0,
  'active': 1,
  'unsubscribe': 2
 });
