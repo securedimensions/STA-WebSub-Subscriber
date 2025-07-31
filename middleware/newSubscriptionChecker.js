@@ -1,8 +1,11 @@
 const { body } = require("express-validator");
 const fs = require('fs');
 const path = require('path');
+const multer  = require('multer')
+const upload = multer({ dest: path.join(__dirname, '../uploads') })
 
 const newSubscriptionChecker = [
+  upload.single('file'),
   body("topic")
     .exists({ checkFalsy: true })
     .withMessage("topic is required")
@@ -27,18 +30,30 @@ const newSubscriptionChecker = [
     .withMessage('secret must be a string')
     .isLength({ min: 20, max:200 })
     .withMessage('secret must have length between 20 and 200 characters'),
-  body("function")
-    .exists({ checkFalsy: true })
-    .withMessage("function is required")
-    .isString()
-    .withMessage('function must be a string')
+  body("file")
+    .custom(async (value, {req}) => {
+        if(typeof req.file !== 'undefined'){
+            return true;
+        }else{
+            throw new Error('a Javascript file is rquired');
+        }
+    })
+    .withMessage("function file is required")
+    .custom(async (value, {req}) => {
+        if(req.file.mimetype === 'text/javascript'){
+            return '.js';
+        }else{
+            throw new Error('upload must be a Javascript file');
+        }
+    })
+    .withMessage('function must upload a Javascript file that contains your function to be executed')
     .custom(async (value, { req }) => {
-        const functionPath = path.join(__dirname, '../callbacks/' + value + '.js')
-        if (!fs.existsSync(functionPath)) {
-            throw new Error("File for function is missing");
+        const functionPath = path.join(__dirname, '../callbacks/' + req.file.originalname)
+        if (fs.existsSync(functionPath)) {
+            throw new Error("Javascript file does already exist");
         }
         return true;
-      })
+    })
 ];
 
 module.exports = { newSubscriptionChecker }

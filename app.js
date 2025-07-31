@@ -38,7 +38,7 @@ handlebars.registerHelper('eq', function (arg1, arg2, options) {
 filter.registerHelper(handlebars);
 
 //app.use(express.json());
-//app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser('WebhookManager', config.cookie_secret));
 
 var options = {
@@ -47,7 +47,6 @@ var options = {
     type: 'application/octet-stream'
   };
 app.use(bodyParser.raw(options));
-app.use(express.urlencoded());
 
 app.use(session({ name: crypto.createHash('md5').update(config.app_name).digest("hex"), cookie: { maxAge: 60 *1000 * 1000 /* 1h */ }}))
 
@@ -72,8 +71,12 @@ app.use(function(err, req, res, next) {
   navLinkService.registerCustomLinks([
     { "label": "About", "url": "/about" }
   ]);
+  navLinkService.registerNavLinks([
+    { "label": "Subscriptions", "url": "/user/subscriptions" }
+  ])
   navLinkService.setCustomNavLinkActive('/');
   res.render('error' , {
+      agentName: process.env.APP_NAME,
       navLinks: navLinkService.getNavLinks(),
       customNavLinks: navLinkService.getCustomNavLinks(),
       user: req.session.user

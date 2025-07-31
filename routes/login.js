@@ -20,7 +20,7 @@ router.get('/login', async function (req, res, next) {
         back = decodeURIComponent(req.query.return);
 
     res.render('login', {
-        agentName: process.env.NAME,
+        agentName: process.env.APP_NAME,
         navLinks: navLinkService.getNavLinks(),
         customNavLinks: navLinkService.getCustomNavLinks(),
         errors: req.errors || null,
@@ -42,12 +42,12 @@ router.post("/login",
         let hashedPassword = crypto.createHash('sha1').update(password).digest('hex');
 
         if ((username === user.username) && (hashedPassword == user.password)) {
-            req.session.user = user;
+            req.session.user = username;
             res.status(200).redirect(decodeURIComponent(back));
         } else {
             req.errors = errors.array();
             return res.render('login', {
-                agentName: process.env.NAME,
+                agentName: process.env.APP_NAME,
                 navLinks: navLinkService.getNavLinks(),
                 customNavLinks: navLinkService.getCustomNavLinks(),
                 username: username,

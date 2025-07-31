@@ -6,11 +6,11 @@
             </span>
         </div>
     </div>
-    <form novalidate autocomplete="off" method="POST" action="/user/subscriptions/new">
+    <form novalidate autocomplete="off" method="POST" enctype="multipart/form-data" action="/user/subscriptions/new">
         <input type="hidden" name="id" value="{{subscription.id}}"/>
         <div class="card-body">
             <div class="form-group">
-                <label for="Callback">Callback:</label>
+                <label for="Callback" class="text-muted" style="font-size: small;">Callback:</label>
                 <input readonly type="text"
                     class="form-control {{#filter error_keys "callback"}}is-invalid{{/filter}}"
                     id="Callback" name="callback"
@@ -24,7 +24,7 @@
                 {{/each}}
             </div>
             <div class="form-group">
-                <label for="Topic">Topic:</label>
+                <label for="Topic" class="text-muted" style="font-size: small;">Topic:</label>
                 <input type="text"
                     class="form-control {{#filter error_keys "topic"}}is-invalid{{/filter}}"
                     id="Topic" name="topic"
@@ -38,7 +38,7 @@
                 {{/each}}
             </div>
             <div class="form-group">
-                <label for="contenType">Content Type:</label>
+                <label for="contenType" class="text-muted" style="font-size: small;">Content Type:</label>
                 <input type="text"
                     class="form-control {{#filter error_keys "content_type"}}is-invalid{{/filter}}"
                     id="contenType" name="content_type"
@@ -52,7 +52,7 @@
                 {{/each}}
             </div>
             <div class="form-group">
-                <label for="leaseSeconds">Lease Seconds:</label>
+                <label for="leaseSeconds" class="text-muted" style="font-size: small;">Lease Seconds:</label>
                 <input type="text"
                     class="form-control {{#filter error_keys "lease_seconds"}}is-invalid{{/filter}}"
                     id="leaseSeconds" name="lease_seconds"
@@ -66,7 +66,7 @@
                 {{/each}}
             </div>
             <div class="form-group">
-                <label for="Secret">Secret:</label>
+                <label for="Secret" class="text-muted" style="font-size: small;">Secret:</label>
                 <input type="text"
                     class="form-control {{#filter error_keys "secret"}}is-invalid{{/filter}}"
                     id="Secret" name="secret"
@@ -80,13 +80,12 @@
                 {{/each}}
             </div>
             <div class="form-group">
-                <label for="Function">Function:</label>
-                <input type="text"
+                <label for="Function" class="text-muted" style="font-size: small;">Function File:</label>
+                <input type="file"
                     class="form-control {{#filter error_keys "function"}}is-invalid{{/filter}}"
-                    id="Function" name="function"
-                    value="{{ subscription.function }}">
+                    id="Function" name="file">
                 {{#each errors}}
-                    {{#eq this.path "function"}}
+                    {{#eq this.path "file"}}
                         <div class="invalid-feedback d-block">
                             <div>{{ this.msg }}</div>
                         </div>
@@ -94,7 +93,7 @@
                 {{/each}}
             </div>
             <div class="form-group">
-                <label for="State">State:</label>
+                <label for="State" class="text-muted" style="font-size: small;">State:</label>
                 <select id="State" name="state"
                     class="custom-select {{#filter error_keys "state"}}is-invalid{{/filter}}"
                     value="{{ subscription.state }}">

@@ -24,6 +24,7 @@
     "handlebars.filter": "^1.0.1",
     "http-errors": "^2.0.0",
     "loglevel": "^1.9.2",
+    "multer": "^2.0.2",
     "parse-http-header": "^1.0.1",
     "querystring": "^0.2.1",
     "url": "^0.11.4"

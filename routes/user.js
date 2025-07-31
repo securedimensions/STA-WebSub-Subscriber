@@ -2,10 +2,12 @@ const express = require('express');
 const router = express.Router();
 const { randomUUID } = require('crypto');
 const { config, log } = require('../settings');
-const NavLinkService = require('../services/NavLinkService');
+const NavLinkService = require('../services/NavLinkService.js');
 const { getSubscription, getSubscriptions, updateSubscription, removeSubscription, newSubscription } = require('../db/db');
 const { newSubscriptionChecker } = require('../middleware/newSubscriptionChecker');
 const { validationResult } = require('express-validator');
+const fs = require('fs');
+const path = require('path');
 
 const navLinkService = new NavLinkService();
 
@@ -24,7 +26,7 @@ router.get('/subscriptions', async function (req, res, next) {
   navLinkService.setNavLinkActive("/user/subscriptions");
   const subscriptions = await getSubscriptions();
   res.render('subscriptions', {
-    agentName: process.env.NAME,
+    agentName: process.env.APP_NAME,
     navLinks: navLinkService.getNavLinks(),
     customNavLinks: navLinkService.getCustomNavLinks(),
     user: req.session.user,
@@ -42,7 +44,7 @@ router.get('/subscriptions/new', async function (req, res, next) {
   const subscription = { 'id': uuid, 'callback': root_url + 'callback/' + uuid, 'state': 0 };
   navLinkService.setNavLinkActive('/user/subscriptions/new');
   res.render('subscription_new', {
-    agentName: process.env.NAME,
+    agentName: process.env.APP_NAME,
     navLinks: navLinkService.getNavLinks(),
     customNavLinks: navLinkService.getCustomNavLinks(),
     user: req.session.user,
@@ -63,14 +65,14 @@ router.post('/subscriptions/new', newSubscriptionChecker, async function (req, r
       'content_type': req.body.content_type,
       'secret': req.body.secret,
       'lease_seconds': req.body.lease_seconds,
-      'function': req.body.function,
+      'function': req.file.originalname,
       'state': req.body.state
     }
     navLinkService.setNavLinkActive('/user/subscriptions/new');
     return res.render('subscription_new', {
       errors: errors || null,
       error_keys: (errors || []).map(error => error.path),
-      agentName: process.env.NAME,
+      agentName: process.env.APP_NAME,
       navLinks: navLinkService.getNavLinks(),
       customNavLinks: navLinkService.getCustomNavLinks(),
       user: req.session.user,
@@ -78,6 +80,12 @@ router.post('/subscriptions/new', newSubscriptionChecker, async function (req, r
       states: states
     });
   }
+
+  const functionPath = path.join(__dirname, '../callbacks/' + req.file.originalname)
+  if (fs.existsSync(functionPath)) {
+    fs.unlinkSync(path.join(__dirname, '../callbacks/' + req.file.originalname));
+  }
+  fs.linkSync(path.join(__dirname, '../uploads/', req.file.filename), path.join(__dirname, '../callbacks/' + req.file.originalname));
   let subscription = {
     'id': req.body.id,
     'callback': req.body.callback,
@@ -85,7 +93,7 @@ router.post('/subscriptions/new', newSubscriptionChecker, async function (req, r
     'content_type': req.body.content_type,
     'secret': req.body.secret,
     'lease_seconds': req.body.lease_seconds,
-    'function': req.body.function,
+    'function': req.file.originalname,
     'state': req.body.state
   }
   await newSubscription(subscription);
@@ -99,7 +107,7 @@ router.get('/subscriptions/:id', async function (req, res, next) {
   ]);
   const subscription = await getSubscription(req.params.id);
   res.render('subscription_update', {
-    agentName: process.env.NAME,
+    agentName: process.env.APP_NAME,
     navLinks: navLinkService.getNavLinks(),
     customNavLinks: navLinkService.getCustomNavLinks(),
     user: req.session.user,
@@ -112,7 +120,7 @@ router.post('/subscriptions/:id', async function (req, res, next) {
   await updateSubscription(req.params.id, req.body.secret, req.body.lease_seconds, req.body.state);
   const subscription = await getSubscription(req.params.id);
   res.render('subscription_update', {
-    agentName: process.env.NAME,
+    agentName: process.env.APP_NAME,
     navLinks: navLinkService.getNavLinks(),
     customNavLinks: navLinkService.getCustomNavLinks(),
     user: req.session.user,
