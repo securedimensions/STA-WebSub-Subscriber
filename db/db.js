@@ -16,6 +16,13 @@ const getSubscriptions = async function () {
     });
 }
 
+const getActiveSubscriptions = async function () {
+    return new Promise((resolve, reject) => {
+        const stmt = db.prepare('SELECT * FROM subscriptions WHERE state=1');
+        resolve(stmt.all());
+    });
+}
+
 const getSubscription = function (id) {
     return new Promise((resolve, reject) => {
         const stmt = db.prepare('SELECT * FROM subscriptions WHERE id=?');
@@ -44,4 +51,4 @@ const newSubscription = function(subscription) {
     });
 };
 
-module.exports = { getSubscriptions, getSubscription, updateSubscription, removeSubscription, newSubscription }
+module.exports = { getSubscriptions, getActiveSubscriptions, getSubscription, updateSubscription, removeSubscription, newSubscription }

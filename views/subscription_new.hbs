@@ -82,7 +82,7 @@
             <div class="form-group">
                 <label for="Function" class="text-muted" style="font-size: small;">Function File:</label>
                 <input type="file"
-                    class="form-control {{#filter error_keys "function"}}is-invalid{{/filter}}"
+                    class="form-control"
                     id="Function" name="file">
                 {{#each errors}}
                     {{#eq this.path "file"}}

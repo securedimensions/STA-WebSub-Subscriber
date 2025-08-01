@@ -37,7 +37,6 @@ handlebars.registerHelper('eq', function (arg1, arg2, options) {
 
 filter.registerHelper(handlebars);
 
-//app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser('WebhookManager', config.cookie_secret));
 

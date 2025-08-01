@@ -3,7 +3,7 @@ const router = express.Router();
 
 const indexRouter = require('./routes/index');
 const loginRouter = require('./routes/login');
-const userRouter = require('./routes/user');
+const userRouter = require('./routes/subscription');
 const webhookRouter = require('./routes/webhook');
 const auth = require('./middleware/auth');
 

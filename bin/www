@@ -6,6 +6,9 @@
 
 var app = require('../app');
 var http = require('http');
+var { sendSubscription } = require("../util");
+var { getActiveSubscriptions } = require('../db/db');
+var { log } = require('../settings');
 
 /**
  * Get port from environment and store in Express.
@@ -64,11 +67,11 @@ function onError(error) {
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
+      log.error(bind + ' requires elevated privileges');
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
+      log.error(bind + ' is already in use');
       process.exit(1);
       break;
     default:
@@ -80,10 +83,18 @@ function onError(error) {
  * Event listener for HTTP server "listening" event.
  */
 
-function onListening() {
+async function onListening()  {
   var addr = server.address();
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  console.log('Listening on ' + bind);
+  log.info('Listening on ' + bind);
+
+  log.info('starting crons for active subscriptions');
+  app.locals.crons = [];
+  for (subscription of await getActiveSubscriptions()) {
+      // Initiate subscribe to the configured Hub
+      await sendSubscription(subscription, 'subscribe')
+  }
+  log.info('finished starting crons for active subscriptions');
 }

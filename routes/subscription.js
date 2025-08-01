@@ -1,13 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const { randomUUID } = require('crypto');
-const { config, log } = require('../settings');
-const NavLinkService = require('../services/NavLinkService.js');
-const { getSubscription, getSubscriptions, updateSubscription, removeSubscription, newSubscription } = require('../db/db');
-const { newSubscriptionChecker } = require('../middleware/newSubscriptionChecker');
 const { validationResult } = require('express-validator');
 const fs = require('fs');
 const path = require('path');
+
+const { config, log } = require('../settings.js');
+const NavLinkService = require('../services/NavLinkService.js');
+const { getSubscription, getSubscriptions, updateSubscription, removeSubscription, newSubscription } = require('../db/db.js');
+const { newSubscriptionChecker } = require('../middleware/newSubscriptionChecker.js');
+const { sendSubscription, stopCron } = require('../util.js');
 
 const navLinkService = new NavLinkService();
 
@@ -23,12 +25,14 @@ router.get('/subscriptions', async function (req, res, next) {
   ]);
   navLinkService.setNavLinkActive("/user/subscriptions");
   const subscriptions = await getSubscriptions();
+  const states = [{ 'key': 'inactive', 'value': 0 }, { 'key': 'active', 'value': 1 }, { 'key': 'allow unsubscribe', 'value': 2 }];
   res.render('subscriptions', {
     agentName: process.env.APP_NAME,
     navLinks: navLinkService.getNavLinks(),
     customNavLinks: navLinkService.getCustomNavLinks(),
     user: req.session.user,
-    subscriptions: subscriptions
+    subscriptions: subscriptions,
+    states: states
   });
 });
 
@@ -96,6 +100,11 @@ router.post('/subscriptions/new', newSubscriptionChecker, async function (req, r
     'state': req.body.state
   }
   await newSubscription(subscription);
+
+  if (subscription.state == 1) {
+    await sendSubscription(subscription, 'subscribe');
+  }
+  
   res.redirect(303, '/user/subscriptions/' + req.body.id);
 });
 
@@ -119,6 +128,12 @@ router.get('/subscriptions/:id', async function (req, res, next) {
 router.post('/subscriptions/:id', async function (req, res, next) {
   await updateSubscription(req.params.id, req.body.secret, req.body.lease_seconds, req.body.state);
   const subscription = await getSubscription(req.params.id);
+  await stopCron(subscription);
+  if (subscription.state == 0) {
+    await sendSubscription(subscription, 'unsubscribe');
+  } else if (subscription.state == 1) {
+      await sendSubscription(subscription, 'subscribe');
+  }
   const states = [{ 'key': 'inactive', 'value': 0 }, { 'key': 'active', 'value': 1 }, { 'key': 'allow unsubscribe', 'value': 2 }];
   res.render('subscription_update', {
     agentName: process.env.APP_NAME,
@@ -131,7 +146,10 @@ router.post('/subscriptions/:id', async function (req, res, next) {
 });
 
 router.delete('/subscriptions/:id', async function (req, res, next) {
+  const subscription = await getSubscription(req.params.id);
   await removeSubscription(req.params.id);
+  await stopCron(subscription);
+
   res.redirect(303, '/user/subscriptions');
 });
 

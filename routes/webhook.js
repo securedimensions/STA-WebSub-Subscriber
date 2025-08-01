@@ -7,6 +7,7 @@ const {validationOfIntent} = require('../middleware/validationOfIntent');
 const {validationOfNotification} = require('../middleware/validationOfNotification');
 const {updateSubscription, removeSubscription} = require('../db/db');
 const { log } = require('../settings');
+var   { crons, restartCron } = require('../util');
 
 router.use('/:id', function(req, res, next) {
     if (['PATCH', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'].includes(req.method)) {
@@ -18,7 +19,7 @@ router.use('/:id', function(req, res, next) {
 router.get('/:id', validationOfIntent, async function(req, res, next) {
     const id = req.params.id;
     log.info("Webhook GET - id: ", id);
-    const subscription = res.locals.subscription;
+    let subscription = res.locals.subscription;
     log.debug("subscription: ", subscription);
 
     // at this point, the validation of intent has passed successfully
@@ -27,11 +28,16 @@ router.get('/:id', validationOfIntent, async function(req, res, next) {
     // Option 3: The Hub denied a previous subscription request -> remove subscription
     log.debug("mode: ", res.locals.mode);
     if (res.locals.mode === 'subscribe') {
-        const updated_subscription = await updateSubscription(id, res.locals.secret, res.locals.lease_seconds);
-        log.debug('updated_subscription: ', updated_subscription);
+        await updateSubscription(id, res.locals.secret, res.locals.lease_seconds, subscription.state);
+        subscription.secret = res.locals.secret;
+        subscription.lease_seconds = res.locals.lease_seconds;
+        subscription.state = res.locals.state;
+        log.debug('updated subscription: ', subscription);
+        await restartCron(subscription);
     } else if (res.locals.mode === 'unsubscribe') {
-        await removeSubscription(id);
+        await stopCron(subscription);
     } else if (res.locals.mode === 'denied') {
+        await stopCron(subscription);
         await removeSubscription(id);
     }
     return res.status(200).type('text').send(res.locals.challenge);

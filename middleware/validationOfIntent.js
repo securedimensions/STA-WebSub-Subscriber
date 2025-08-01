@@ -118,7 +118,7 @@ const validationOfIntent = async (req, res, next) => {
     res.locals.secret = secret;
     log.debug('secret: ', res.locals.secret);
 
-  } else if (subscription.state !== subscription_state.unsubscribe.value) {
+  } else if (subscription.state === subscription_state.active.value) {
       const error = 'callback not marked for unsubscribe';
       log.error(error);
       return res.status(403).contentType('text').send(error);
