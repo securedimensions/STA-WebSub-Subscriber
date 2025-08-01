@@ -1,0 +1,11 @@
+services:
+  websubwebhook:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./subscriptions.sqlite:/subscriptions.sqlite
+    env_file:
+      - .env
