@@ -1,13 +1,16 @@
 const sqlite3 = require('better-sqlite3');
 const db = new sqlite3('./subscriptions.sqlite');
+const { log, config } = require('../settings');
 
 let createDb = 'CREATE TABLE IF NOT EXISTS "subscriptions" ("id" TEXT NOT NULL PRIMARY KEY, "content_type" TEXT NOT NULL, "callback" TEXT NOT NULL, "topic" TEXT not NULL, "function" TEXT not NULL, "lease_seconds" INTEGER, "secret" TEXT, "state" INTEGER)';
 db.exec(createDb);
 try {
-    let insertSubscription = "insert into subscriptions values('ba5b5806-cbeb-4c90-b7c2-226ec79d9710','application/json','https://websub-webhook.citiobs.secd.eu/callback/ba5b5806-cbeb-4c90-b7c2-226ec79d9710','https://citiobs.demo.secure-dimensions.de/staplustest/v1.1/Datastreams(5002)/Observations','ba5b5806-cbeb-4c90-b7c2-226ec79d9710', 120,'secret',1)";
+    let insertSubscription = `insert into subscriptions values('ba5b5806-cbeb-4c90-b7c2-226ec79d9710','application/json','${config.root_url}/callback/ba5b5806-cbeb-4c90-b7c2-226ec79d9710','https://citiobs.demo.secure-dimensions.de/staplustest/v1.1/Datastreams(5002)/Observations','ba5b5806-cbeb-4c90-b7c2-226ec79d9710', 120,'secret',1)`;
     db.exec(insertSubscription);
 }
-catch (err) {}
+catch (err) {
+    log.error(err);
+}
 
 const getSubscriptions = async function () {
     return new Promise((resolve, reject) => {

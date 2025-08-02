@@ -3,12 +3,15 @@
 require("dotenv").config();
 
 const log = require('loglevel');
-log.setLevel(["debug","DEBUG"].indexOf(process.env.LOG_LEVEL) ?  log.levels.DEBUG : log.levels.INFO);
+log.setLevel(process.env.LOG_LEVEL || "WARN");
+
+let root_url = process.env.ROOT_URL || 'http://localhost:3000/callback';
+root_url = (root_url.endsWith('/')) ? root_url.slice(0,-1) : root_url;
 
 module.exports = {
     "config": {
         "port": process.env.PORT || 3000,
-        "root_url": process.env.ROOT_URL || 'http://localhost:3000/callback/', // must have / at the end!
+        "root_url": root_url,
         "hub_url": process.env.HUB_URL || 'http://localhost:4000/api/subscriptions',
         "lease_seconds": process.env.LEASE_SECONDS || 300,
         "lease_skew_seconds": process.env.LEASE_SKEW_SECONDS || 10,
