@@ -42,7 +42,7 @@ router.get('/subscriptions/new', async function (req, res, next) {
     { "label": "New", "url": "/user/subscriptions/new" }
   ]);
   const uuid = randomUUID();
-  const subscription = { 'id': uuid, 'callback': root_url + '/callback/' + uuid, 'state': 0 };
+  const subscription = { 'id': uuid, 'callback': config.root_url + '/callback/' + uuid, 'state': 0 };
   navLinkService.setNavLinkActive('/user/subscriptions/new');
   const states = [{ 'key': 'inactive', 'value': 0 }, { 'key': 'active', 'value': 1 }];
   res.render('subscription_new', {
