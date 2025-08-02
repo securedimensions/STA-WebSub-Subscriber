@@ -86,9 +86,9 @@ router.post('/subscriptions/new', newSubscriptionChecker, async function (req, r
 
   const functionPath = path.join(__dirname, '../callbacks/' + req.file.originalname)
   if (fs.existsSync(functionPath)) {
-    fs.unlinkSync(path.join(__dirname, '../callbacks/' + req.file.originalname));
+    fs.rmSync(path.join(__dirname, '../callbacks/' + req.file.originalname));
   }
-  fs.linkSync(path.join(__dirname, '../uploads/', req.file.filename), path.join(__dirname, '../callbacks/' + req.file.originalname));
+  fs.renameSync(path.join(__dirname, '../uploads/', req.file.filename), path.join(__dirname, '../callbacks/' + req.file.originalname));
   let subscription = {
     'id': req.body.id,
     'callback': req.body.callback,
@@ -104,7 +104,7 @@ router.post('/subscriptions/new', newSubscriptionChecker, async function (req, r
   if (subscription.state == 1) {
     await sendSubscription(subscription, 'subscribe');
   }
-  
+
   res.redirect(303, '/user/subscriptions/' + req.body.id);
 });
 
@@ -132,7 +132,7 @@ router.post('/subscriptions/:id', async function (req, res, next) {
   if (subscription.state == 0) {
     await sendSubscription(subscription, 'unsubscribe');
   } else if (subscription.state == 1) {
-      await sendSubscription(subscription, 'subscribe');
+    await sendSubscription(subscription, 'subscribe');
   }
   const states = [{ 'key': 'inactive', 'value': 0 }, { 'key': 'active', 'value': 1 }, { 'key': 'allow unsubscribe', 'value': 2 }];
   res.render('subscription_update', {
@@ -150,7 +150,7 @@ router.delete('/subscriptions/:id', async function (req, res, next) {
   await removeSubscription(req.params.id);
   await stopCron(subscription);
   fs.unlinkSync(path.join(__dirname, '../callbacks/' + subscription.function));
-  
+
 
   res.redirect(303, '/user/subscriptions');
 });
