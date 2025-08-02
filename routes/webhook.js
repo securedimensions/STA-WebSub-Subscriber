@@ -7,7 +7,7 @@ const {validationOfIntent} = require('../middleware/validationOfIntent');
 const {validationOfNotification} = require('../middleware/validationOfNotification');
 const {updateSubscription, removeSubscription} = require('../db/db');
 const { log } = require('../settings');
-var   { crons, restartCron } = require('../util');
+var   { restartCron, stopCron } = require('../util');
 
 router.use('/:id', function(req, res, next) {
     if (['PATCH', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'].includes(req.method)) {
