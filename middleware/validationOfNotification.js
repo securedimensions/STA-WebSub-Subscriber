@@ -8,18 +8,18 @@ const validationOfNotification = async (req, res, next) => {
   const id = req.params.id;
   const subscription = await getSubscription(id);
 
-  // If the subscription is inactive, return 410 GONE
-  if (subscription.state !== 1) {
-    log.error('notification received for inactive subscription on callback: ', subscription.callback);
-    return res.status(410).end();
-  }
-
   res.locals.subscription = subscription;
   log.debug("subscription: ", subscription);
   if (typeof subscription === 'undefined') {
     const error = 'callback does not exist';
     log.error(error);
     return res.status(404).contentType('text').send(error);
+  }
+
+  // If the subscription is inactive, return 410 GONE
+  if (subscription.state !== 1) {
+    log.error('notification received for inactive subscription on callback: ', subscription.callback);
+    return res.status(410).end();
   }
 
   if (!req.header('content-type') === undefined) {
