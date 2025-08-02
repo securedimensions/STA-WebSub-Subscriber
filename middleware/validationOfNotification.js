@@ -7,6 +7,13 @@ const validationOfNotification = async (req, res, next) => {
 
   const id = req.params.id;
   const subscription = await getSubscription(id);
+
+  // If the subscription is inactive, return 410 GONE
+  if (subscription.state !== 1) {
+    log.error('notification received for inactive subscription on callback: ', subscription.callback);
+    return res.status(410).end();
+  }
+
   res.locals.subscription = subscription;
   log.debug("subscription: ", subscription);
   if (typeof subscription === 'undefined') {
@@ -30,7 +37,7 @@ const validationOfNotification = async (req, res, next) => {
     return res.status(415).contentType('text').send(error);
   }
 
-  if (subscription.secret !== null) {
+  if (subscription.secret !== '') {
     const x_hub_signature = req.header('x-hub-signature');
     if (x_hub_signature === undefined) {
       log.error("ignoring message because X-Hub-Signature header is missing");

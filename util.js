@@ -5,7 +5,7 @@ const { config, log } = require('./settings');
 var crons = [];
 
 async function sendSubscription(subscription, method) {
-    log.debug('sending subscribe for: ', subscription.callback);
+    log.debug(`sending ${method} for: `, subscription.callback);
     request(config.hub_url, {
         method: 'POST',
         followRedirect: false,
@@ -20,7 +20,7 @@ async function sendSubscription(subscription, method) {
         log.debug('status: %s, body: %s, headers: %j', res.statusCode, res.data, res.headers);
 
         if (res.statusCode >= 300) {
-          log.error('subscribe update request returned status code: ', res.statusCode);
+          log.error(`${mode} update request returned status code: `, res.statusCode);
           return;
         }
 

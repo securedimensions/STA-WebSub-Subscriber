@@ -24,12 +24,7 @@ const newSubscriptionChecker = [
     .contains('/')
     .withMessage('content_type must include a /'),
   body("secret")
-    .exists({ checkFalsy: true })
-    .withMessage("secret is required")
-    .isString()
-    .withMessage('secret must be a string')
-    .isLength({ min: 20, max:200 })
-    .withMessage('secret must have length between 20 and 200 characters'),
+    .optional({nullable: true, checkFalsy: true}),
   body("file")
     .custom(async (value, {req}) => {
         if(typeof req.file !== 'undefined'){

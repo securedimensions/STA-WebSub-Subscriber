@@ -49,24 +49,39 @@ router.post('/:id', validationOfNotification, async function(req, res, next) {
     const subscription = res.locals.subscription;
     log.debug("subscription: ", subscription);
     
-    let hmac = crypto.createHmac(res.locals.x_hub_algorithm, subscription.secret);
-    log.debug('start collecting POSTed data and calculate hmac');
-    let body = [];
-        req.on('data', async (data) => {
-            hmac.update(data);
-            body.push(data);
-        });
-        req.on('end', async () => {
-            const hash = hmac.digest("hex");
-            log.debug('finished collecting POSTed data');
-            if (hash !== res.locals.x_hub_value) {
-                log.error("ignoring message because X-Hub-Signature is wrong");
-            } else {
-                log.debug("hmac match");
+    if (subscription.secret !== '') {
+        let hmac = crypto.createHmac(res.locals.x_hub_algorithm, subscription.secret);
+        log.debug('start collecting POSTed data and calculate hmac');
+        let body = [];
+            req.on('data', async (data) => {
+                hmac.update(data);
+                body.push(data);
+            });
+            req.on('end', async () => {
+                const hash = hmac.digest("hex");
+                log.debug('finished collecting POSTed data');
+                if (hash !== res.locals.x_hub_value) {
+                    log.error("ignoring message because X-Hub-Signature is wrong");
+                } else {
+                    log.debug("hmac match");
+                    require('../callbacks/' + subscription.function).call(body);
+                }
+                return res.status(200).end();
+            }); 
+    } else {
+        log.debug('start collecting POSTed data and calculate hmac');
+        let body = [];
+            req.on('data', async (data) => {
+                body.push(data);
+            });
+            req.on('end', async () => {
+                log.debug('finished collecting POSTed data');
                 require('../callbacks/' + subscription.function).call(body);
-            }
-            return res.status(200).end();
-        }); 
+                return res.status(200).end();
+            }); 
+    }
+
+
    
 });
 
