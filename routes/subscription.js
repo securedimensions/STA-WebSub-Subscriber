@@ -114,6 +114,9 @@ router.get('/subscriptions/:id', async function (req, res, next) {
     { "label": "New", "url": "/user/subscriptions/new" }
   ]);
   const subscription = await getSubscription(req.params.id);
+  if (typeof subscription === 'undefined') {
+    res.redirect('/user/subscriptions');
+  }
   const states = [{ 'key': 'inactive', 'value': 0 }, { 'key': 'active', 'value': 1 }, { 'key': 'allow unsubscribe', 'value': 2 }];
   res.render('subscription_update', {
     agentName: process.env.APP_NAME,
