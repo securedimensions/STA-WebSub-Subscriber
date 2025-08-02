@@ -3,7 +3,7 @@ const router = express.Router();
 const crypto = require('crypto');
 
 const NavLinkService = require('../services/NavLinkService');
-const {config} = requires('../settings');
+const {config} = require('../settings');
 
 const navLinkService = new NavLinkService();
 
