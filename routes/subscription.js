@@ -149,6 +149,8 @@ router.delete('/subscriptions/:id', async function (req, res, next) {
   const subscription = await getSubscription(req.params.id);
   await removeSubscription(req.params.id);
   await stopCron(subscription);
+  fs.unlinkSync(path.join(__dirname, '../callbacks/' + subscription.function));
+  
 
   res.redirect(303, '/user/subscriptions');
 });
