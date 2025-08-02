@@ -46,7 +46,7 @@ async function startCron(subscription) {
 async function stopCron(subscription) {
     const cron = crons.find(e => e.callback == subscription.callback);
     if (typeof cron !== 'undefined') {
-        clearTimeout(cron);
+        clearTimeout(cron.cron);
         crons = crons.filter(function(e) { return e.callback != subscription.callback; }); 
         log.debug('cron stopped for ', subscription.callback);
     }
@@ -56,7 +56,7 @@ async function stopCron(subscription) {
 async function restartCron(subscription) {
     const cron = crons.find(e => e.callback == subscription.callback);
     if (typeof cron !== 'undefined') {
-        clearTimeout(cron);
+        await stopCron(subscription);
     }
 
     await startCron(subscription);

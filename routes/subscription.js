@@ -9,7 +9,7 @@ const { config, log } = require('../settings.js');
 const NavLinkService = require('../services/NavLinkService.js');
 const { getSubscription, getSubscriptions, updateSubscription, removeSubscription, newSubscription } = require('../db/db.js');
 const { newSubscriptionChecker } = require('../middleware/newSubscriptionChecker.js');
-const { sendSubscription, stopCron } = require('../util.js');
+const { sendSubscription, stopCron, restartCron } = require('../util.js');
 
 const navLinkService = new NavLinkService();
 
@@ -134,8 +134,10 @@ router.post('/subscriptions/:id', async function (req, res, next) {
   await stopCron(subscription);
   if (subscription.state == 0) {
     await sendSubscription(subscription, 'unsubscribe');
+    await stopCron(subscription);
   } else if (subscription.state == 1) {
     await sendSubscription(subscription, 'subscribe');
+    await restartCron(subscription)
   }
   const states = [{ 'key': 'inactive', 'value': 0 }, { 'key': 'active', 'value': 1 }, { 'key': 'allow unsubscribe', 'value': 2 }];
   res.render('subscription_update', {
