@@ -86,7 +86,7 @@ router.post('/subscriptions/new', newSubscriptionChecker, async function (req, r
 
   const functionPath = path.join(__dirname, '../callbacks/' + req.file.originalname)
   if (fs.existsSync(functionPath)) {
-    fs.rmSync(path.join(__dirname, '../callbacks/' + req.file.originalname));
+    fs.rmSync(functionPath);
   }
   fs.renameSync(path.join(__dirname, '../uploads/', req.file.filename), path.join(__dirname, '../callbacks/' + req.file.originalname));
   let subscription = {
@@ -149,8 +149,10 @@ router.delete('/subscriptions/:id', async function (req, res, next) {
   const subscription = await getSubscription(req.params.id);
   await removeSubscription(req.params.id);
   await stopCron(subscription);
-  fs.unlinkSync(path.join(__dirname, '../callbacks/' + subscription.function));
-
+  const functionPath = path.join(__dirname, '../callbacks/' + subscription.function);
+  if (fs.existsSync(functionPath)) {
+    fs.rmSync(functionPath);
+  }
 
   res.redirect(303, '/user/subscriptions');
 });
