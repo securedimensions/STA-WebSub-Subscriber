@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const NavLinkService = require('../services/NavLinkService');
 const crypto = require('crypto');
+
+const NavLinkService = require('../services/NavLinkService');
+const {config} = requires('../settings');
 
 const navLinkService = new NavLinkService();
 
@@ -30,7 +32,8 @@ router.get('/about', async function(req, res, next) {
     agentName: process.env.APP_NAME,
     navLinks: navLinkService.getNavLinks(),
     customNavLinks: navLinkService.getCustomNavLinks(),
-    user: req.session.user
+    user: req.session.user,
+    hurl_url: config.hub_url
   });
 });
 
