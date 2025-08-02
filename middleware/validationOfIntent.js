@@ -105,8 +105,8 @@ const validationOfIntent = async (req, res, next) => {
     // In case the Hub has changed the lease_seconds according to own policy
     log.info('setting lease_seconds to: ', res.locals.lease_seconds);
 
-    let secret = req.query['hub.secret'] || null;
-    if (secret !== null) {
+    let secret = req.query['hub.secret'] || '';
+    if (secret !== '') {
       secret = secret.toString("utf8").trim();
 
       if (secret.length > 200) {

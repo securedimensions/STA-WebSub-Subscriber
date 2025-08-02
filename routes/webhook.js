@@ -31,7 +31,7 @@ router.get('/:id', validationOfIntent, async function(req, res, next) {
         await updateSubscription(id, res.locals.secret, res.locals.lease_seconds, subscription.state);
         subscription.secret = res.locals.secret;
         subscription.lease_seconds = res.locals.lease_seconds;
-        subscription.state = res.locals.state;
+        subscription.state = subscription.state;
         log.debug('updated subscription: ', subscription);
         await restartCron(subscription);
     } else if (res.locals.mode === 'unsubscribe') {
