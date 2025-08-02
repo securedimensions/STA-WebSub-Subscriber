@@ -33,7 +33,7 @@ router.get('/about', async function(req, res, next) {
     navLinks: navLinkService.getNavLinks(),
     customNavLinks: navLinkService.getCustomNavLinks(),
     user: req.session.user,
-    hurl_url: config.hub_url
+    hub_url: config.hub_url
   });
 });
 
