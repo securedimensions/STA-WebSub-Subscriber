@@ -71,6 +71,7 @@ router.post('/subscriptions/new', newSubscriptionChecker, async function (req, r
       'state': req.body.state
     }
     navLinkService.setNavLinkActive('/user/subscriptions/new');
+    const states = [{ 'key': 'inactive', 'value': 0 }, { 'key': 'active', 'value': 1 }];
     return res.render('subscription_new', {
       errors: errors || null,
       error_keys: (errors || []).map(error => error.path),
