@@ -35,7 +35,7 @@ const newSubscriptionChecker = [
     })
     .withMessage("function file is required")
     .custom(async (value, {req}) => {
-        if(req.file.mimetype === 'text/javascript'){
+        if((req.file.mimetype === 'text/javascript') || (req.file.mimetype === 'application/x-javascript')){
             return '.js';
         }else{
             throw new Error('upload must be a Javascript file');
