@@ -20,7 +20,7 @@ async function sendSubscription(subscription, method) {
         log.debug('status: %s, body: %s, headers: %j', res.statusCode, res.data, res.headers);
 
         if (res.statusCode >= 300) {
-          log.error(`${mode} update request returned status code: `, res.statusCode);
+          log.error('update request returned status code: ', res.statusCode);
           return;
         }
 
