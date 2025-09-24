@@ -23,6 +23,9 @@ const newSubscriptionChecker = [
     .withMessage('content_type must be a string')
     .contains('/')
     .withMessage('content_type must include a /'),
+  body("id")
+    .exists({ checkFalsy: true })
+    .withMessage("id is required"),
   body("secret")
     .optional({nullable: true, checkFalsy: true}),
   body("file")
@@ -43,7 +46,7 @@ const newSubscriptionChecker = [
     })
     .withMessage('function must upload a Javascript file that contains your function to be executed')
     .custom(async (value, { req }) => {
-        const functionPath = path.join(__dirname, '../callbacks/' + req.file.originalname)
+        const functionPath = path.join(__dirname, '../callbacks/' + req.body.id)
         if (fs.existsSync(functionPath)) {
             throw new Error("Javascript file does already exist");
         }

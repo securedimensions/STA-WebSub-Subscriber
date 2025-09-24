@@ -84,11 +84,8 @@ router.post('/subscriptions/new', newSubscriptionChecker, async function (req, r
     });
   }
 
-  const functionPath = path.join(__dirname, '../callbacks/' + req.file.originalname)
-  if (fs.existsSync(functionPath)) {
-    fs.rmSync(functionPath);
-  }
-  fs.renameSync(path.join(__dirname, '../uploads/', req.file.filename), path.join(__dirname, '../callbacks/' + req.file.originalname));
+  const functionFilename = req.body.id + '.js';
+  fs.renameSync(path.join(__dirname, '../uploads/', req.file.filename), path.join(__dirname, '../callbacks/' + functionFilename));
   let subscription = {
     'id': req.body.id,
     'callback': req.body.callback,
@@ -96,7 +93,7 @@ router.post('/subscriptions/new', newSubscriptionChecker, async function (req, r
     'content_type': req.body.content_type,
     'secret': req.body.secret,
     'lease_seconds': req.body.lease_seconds,
-    'function': req.file.originalname,
+    'function': functionFilename,
     'state': req.body.state
   }
   await newSubscription(subscription);
