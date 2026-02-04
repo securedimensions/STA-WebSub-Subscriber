@@ -67,8 +67,8 @@ router.post('/subscriptions/new', newSubscriptionChecker, async function (req, r
       'content_type': req.body.content_type,
       'secret': req.body.secret,
       'lease_seconds': req.body.lease_seconds,
-      'function': req.file.originalname,
-      'state': req.body.state
+      'function': req.file ? req.file.originalname : undefined,
+      'state': req.body.state ? req.body.state : undefined
     }
     navLinkService.setNavLinkActive('/user/subscriptions/new');
     const states = [{ 'key': 'inactive', 'value': 0 }, { 'key': 'active', 'value': 1 }];
@@ -84,11 +84,12 @@ router.post('/subscriptions/new', newSubscriptionChecker, async function (req, r
     });
   }
 
-  const functionPath = path.join(__dirname, '../callbacks/' + req.file.originalname)
+  const functionPath = path.join(__dirname, '../callbacks/' + req.body.id + '.js')
   if (fs.existsSync(functionPath)) {
     fs.rmSync(functionPath);
   }
-  fs.renameSync(path.join(__dirname, '../uploads/', req.file.filename), path.join(__dirname, '../callbacks/' + req.file.originalname));
+  fs.copyFileSync(path.join(__dirname, '../uploads/', req.file.filename), path.join(__dirname, '../callbacks/' + req.body.id + '.js'));
+  fs.unlinkSync(path.join(__dirname, '../uploads/', req.file.filename));
   let subscription = {
     'id': req.body.id,
     'callback': req.body.callback,
@@ -96,7 +97,7 @@ router.post('/subscriptions/new', newSubscriptionChecker, async function (req, r
     'content_type': req.body.content_type,
     'secret': req.body.secret,
     'lease_seconds': req.body.lease_seconds,
-    'function': req.file.originalname,
+    'function': req.body.id + '.js',
     'state': req.body.state
   }
   await newSubscription(subscription);

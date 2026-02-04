@@ -15,7 +15,7 @@ const newSubscriptionChecker = [
     .exists({ checkFalsy: true })
     .withMessage("lease_seconds is required")
     .isInt({ min:60})
-    .withMessage("lease_seconds must be integer and > 60"),
+    .withMessage("lease_seconds must be integer and greater than or equal to 60"),
   body("content_type")
     .exists({ checkFalsy: true })
     .withMessage("content_type is required")
@@ -25,6 +25,9 @@ const newSubscriptionChecker = [
     .withMessage('content_type must include a /'),
   body("secret")
     .optional({nullable: true, checkFalsy: true}),
+  body("state")
+    .exists({ checkFalsy: true })
+    .withMessage("state selection is required"),
   body("file")
     .custom(async (value, {req}) => {
         if(typeof req.file !== 'undefined'){
@@ -43,7 +46,7 @@ const newSubscriptionChecker = [
     })
     .withMessage('function must upload a Javascript file that contains your function to be executed')
     .custom(async (value, { req }) => {
-        const functionPath = path.join(__dirname, '../callbacks/' + req.file.originalname)
+        const functionPath = path.join(__dirname, '../callbacks/' + req.body.id + '.js')
         if (fs.existsSync(functionPath)) {
             throw new Error("Javascript file does already exist");
         }
