@@ -98,11 +98,8 @@ router.post('/subscriptions/new', newSubscriptionChecker, async function (req, r
     'content_type': req.body.content_type,
     'secret': req.body.secret,
     'lease_seconds': req.body.lease_seconds,
-<<<<<<< HEAD
+
     'function': req.body.id + '.js',
-=======
-    'function': functionFilename,
->>>>>>> 17dbe0cfd4a196908975f1b0c0c10ce7fb51280c
     'state': req.body.state
   }
   await newSubscription(subscription);
