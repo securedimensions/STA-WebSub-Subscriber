@@ -23,6 +23,9 @@ const newSubscriptionChecker = [
     .withMessage('content_type must be a string')
     .contains('/')
     .withMessage('content_type must include a /'),
+  body("id")
+    .exists({ checkFalsy: true })
+    .withMessage("id is required"),
   body("secret")
     .optional({nullable: true, checkFalsy: true}),
   body("state")

@@ -1,7 +1,7 @@
 services:
   sta-websub-subscriber:
     build:
-      context: .
+      context: ..
       dockerfile: Dockerfile
     ports:
       - "3003:3003"

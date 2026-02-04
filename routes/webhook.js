@@ -64,7 +64,12 @@ router.post('/:id', validationOfNotification, async function(req, res, next) {
                     log.error("ignoring message because X-Hub-Signature is wrong");
                 } else {
                     log.debug("hmac match");
-                    require('../callbacks/' + subscription.function).call(body);
+                    try {
+                        require('../callbacks/' + subscription.function).call(body);
+                    }
+                    catch(e) {
+                        log.error(e);
+                    }
                 }
                 return res.status(200).end();
             }); 
@@ -76,7 +81,12 @@ router.post('/:id', validationOfNotification, async function(req, res, next) {
             });
             req.on('end', async () => {
                 log.debug('finished collecting POSTed data');
-                require('../callbacks/' + subscription.function).call(body);
+                try {
+                        require('../callbacks/' + subscription.function).call(body);
+                    }
+                    catch(e) {
+                        log.error(e);
+                    }
                 return res.status(200).end();
             }); 
     }
