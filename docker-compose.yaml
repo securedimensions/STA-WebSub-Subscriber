@@ -1,11 +1,16 @@
 services:
-  websubwebhook:
+  sta-websub-subscriber:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3003:3003"
     volumes:
-      - ./subscriptions.sqlite:/subscriptions.sqlite
+      - type: bind
+        source: ./subscriptions.sqlite
+        target: /app/subscriptions.sqlite
+      - callbacks:/app/callbacks
     env_file:
       - .env
+volumes:
+  callbacks:
