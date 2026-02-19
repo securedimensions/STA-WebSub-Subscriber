@@ -1,15 +1,16 @@
 services:
   sta-websub-subscriber:
+    restart: unless-stopped
     build:
       context: ..
       dockerfile: Dockerfile
     ports:
-      - "3003:3003"
+      - "3003:3000"
     volumes:
       - type: bind
-        source: ./subscriptions.sqlite
+        source: ../subscriptions.sqlite
         target: /app/subscriptions.sqlite
-      - callbacks:/app/callbacks
+      - ../callbacks:/app/callbacks
     env_file:
       - .env
 volumes:

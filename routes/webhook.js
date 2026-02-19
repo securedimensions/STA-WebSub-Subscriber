@@ -65,7 +65,7 @@ router.post('/:id', validationOfNotification, async function(req, res, next) {
                 } else {
                     log.debug("hmac match");
                     try {
-                        require('../callbacks/' + subscription.function).call(body);
+                        require('../callbacks/' + subscription.function).call(body, subscription);
                     }
                     catch(e) {
                         log.error(e);
@@ -82,7 +82,7 @@ router.post('/:id', validationOfNotification, async function(req, res, next) {
             req.on('end', async () => {
                 log.debug('finished collecting POSTed data');
                 try {
-                        require('../callbacks/' + subscription.function).call(body);
+                        require('../callbacks/' + subscription.function).call(body, subscription);
                     }
                     catch(e) {
                         log.error(e);
