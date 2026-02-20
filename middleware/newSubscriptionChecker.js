@@ -6,11 +6,21 @@ const upload = multer({ dest: path.join(__dirname, '../uploads') })
 
 const newSubscriptionChecker = [
   upload.single('file'),
-  body("topic")
+  body("topics")
     .exists({ checkFalsy: true })
-    .withMessage("topic is required")
-    .isURL({protocols: ['http', 'https']})
-    .withMessage("topic must be a URL with protocol http or https"),
+    .withMessage("topics is required")
+    .custom(async (value, {req}) => {
+        if(Array.isArray(value)){
+          for(let topic of value) {
+            if (!topic.startsWith('http'))
+              throw new Error('topic must be a URL with protocol http or https');
+          }
+        }else{
+            if (!value.startsWith('http'))
+              throw new Error('topic must be a URL with protocol http or https');
+        }
+        return true;
+    }),
   body("lease_seconds")
     .exists({ checkFalsy: true })
     .withMessage("lease_seconds is required")

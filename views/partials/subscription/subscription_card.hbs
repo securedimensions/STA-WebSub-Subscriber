@@ -20,10 +20,12 @@
             <span>{{  subscription.callback }}</span>
         </div>
         <div class="card-text">
-            <span>
-                <small class="text-muted">Topic</small>
-            </span>
-            <span>{{ subscription.topic }}</span>
+            <small class="text-muted">Topic(s)</small>
+            <ul style="list-style: none; margin-top: 0; margin-bottom: 0;">
+            {{#each subscription.topics}}
+            <li>{{ this }}<li>
+            {{/each}}
+            </ul>
         </div>
         <div class="card-text">
             <span>

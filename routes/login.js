@@ -11,7 +11,7 @@ navLinkService.registerCustomLinks([
     { "label": "About", "url": "/about" }
 ]);
 
-const user = { 'username': process.env.ADMIN || 'admin', 'password': crypto.createHash('sha1').update(process.env.PASSWORD || 'admin').digest('hex') }
+const user = { 'username': process.env.LOGIN || 'admin', 'password': crypto.createHash('sha1').update(process.env.PASSWORD || 'admin').digest('hex') }
 
 router.get('/login', async function (req, res, next) {
 

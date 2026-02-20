@@ -6,27 +6,30 @@ var crons = [];
 
 async function sendSubscription(subscription, method) {
     log.debug(`sending ${method} for: `, subscription.callback);
-    request(config.hub_url, {
-        method: 'POST',
-        followRedirect: false,
-        data: {
-          'hub.mode': method,
-          'hub.topic': querystring.escape(subscription.topic),
-          'hub.callback': subscription.callback,
-          'hub.secret': subscription.secret,
-          'hub.lease_seconds': subscription.lease_seconds
-        }
-      }).then(res => {
-        log.debug('status: %s, body: %s, headers: %j', res.statusCode, res.data, res.headers);
+    for (let topic of subscription.topics.split(',')) {
+      log.debug('sending request for topic: ', topic);
+      request(config.hub_url, {
+          method: 'POST',
+          followRedirect: false,
+          data: {
+            'hub.mode': method,
+            'hub.topic': querystring.escape(topic),
+            'hub.callback': subscription.callback,
+            'hub.secret': subscription.secret,
+            'hub.lease_seconds': subscription.lease_seconds
+          }
+        }).then(res => {
+          log.debug('status: %s, body: %s, headers: %j', res.statusCode, res.data, res.headers);
 
-        if (res.statusCode >= 300) {
-          log.error('update request returned status code: ', res.statusCode);
-          return;
-        }
+          if (res.statusCode >= 300) {
+            log.error('update request returned status code: ', res.statusCode);
+            return;
+          }
 
-      }).catch(error => {
-        log.error(error);
-      });
+        }).catch(error => {
+          log.error(error);
+        });
+      }
 }
 
 async function startCron(subscription) {

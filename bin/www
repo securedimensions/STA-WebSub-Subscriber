@@ -92,7 +92,7 @@ async function onListening()  {
 
   log.info('starting crons for active subscriptions');
   app.locals.crons = [];
-  for (subscription of await getActiveSubscriptions()) {
+  for (let subscription of await getActiveSubscriptions()) {
       // Initiate subscribe to the configured Hub
       await sendSubscription(subscription, 'subscribe')
   }

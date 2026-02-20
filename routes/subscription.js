@@ -42,7 +42,7 @@ router.get('/subscriptions/new', async function (req, res, next) {
     { "label": "New", "url": "/user/subscriptions/new" }
   ]);
   const uuid = randomUUID();
-  const subscription = { 'id': uuid, 'callback': config.root_url + '/callback/' + uuid, 'state': 0 };
+  const subscription = { 'id': uuid, 'topics': [''], 'callback': config.root_url + '/callback/' + uuid, 'state': 0 };
   navLinkService.setNavLinkActive('/user/subscriptions/new');
   const states = [{ 'key': 'inactive', 'value': 0 }, { 'key': 'active', 'value': 1 }];
   res.render('subscription_new', {
@@ -63,7 +63,7 @@ router.post('/subscriptions/new', newSubscriptionChecker, async function (req, r
     let subscription = {
       'id': req.body.id,
       'callback': req.body.callback,
-      'topic': req.body.topic,
+      'topics': Array.isArray(req.body.topics) ? req.body.topics : [req.body.topics],
       'content_type': req.body.content_type,
       'secret': req.body.secret,
       'lease_seconds': req.body.lease_seconds,
@@ -94,7 +94,7 @@ router.post('/subscriptions/new', newSubscriptionChecker, async function (req, r
   let subscription = {
     'id': req.body.id,
     'callback': req.body.callback,
-    'topic': req.body.topic,
+    'topics': Array.isArray(req.body.topics) ? req.body.topics : [req.body.topics],
     'content_type': req.body.content_type,
     'secret': req.body.secret,
     'lease_seconds': req.body.lease_seconds,

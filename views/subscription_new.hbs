@@ -24,13 +24,25 @@
                 {{/each}}
             </div>
             <div class="form-group">
-                <label for="Topic" class="text-muted" style="font-size: small;">Topic:</label>
-                <input type="text"
-                    class="form-control {{#filter error_keys "topic"}}is-invalid{{/filter}}"
-                    id="Topic" name="topic"
-                    value="{{ subscription.topic }}">
+                <label for="Topic" class="text-muted" style="font-size: small;">Topic(s):</label>
+                <div id="topics">
+                    {{#each subscription.topics}}
+                    <div class="input-group">
+                        <input type="text"
+                            class="form-control {{#filter error_keys "topic"}}is-invalid{{/filter}}"
+                            id="Topic" name="topics"
+                            value="{{this}}"/>
+                        {{#if @first}}
+                        <span class="btn input-group-addon add-field">(+)</span>
+                        {{else}}
+                        <span class="btn input-group-addon delete-field">(-)</span>
+                        {{/if}}
+                    </div>
+                    {{/each}}
+                    <div id="topicAnchor"/>
+                </div>
                 {{#each errors}}
-                    {{#eq this.path "topic"}}
+                    {{#eq this.path "topics"}}
                         <div class="invalid-feedback d-block">
                             <div>{{ this.msg }}</div>
                         </div>
@@ -121,3 +133,16 @@
     </form>
 </div>
 
+<script>
+var template = '<div class="input-group"><input type="text" name="topics" class="form-control"/></div>',
+minusButton = '<span class="btn input-group-addon delete-field">(-)</span>';
+
+$('.add-field').click(function() {
+  var temp = $(template).insertBefore('#topicAnchor');
+  temp.append(minusButton);
+});
+
+$('#topics').on('click', '.delete-field', function(){
+  $(this).parent().remove();
+});
+</script>

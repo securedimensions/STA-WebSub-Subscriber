@@ -22,9 +22,11 @@
             </div>
             <div class="card-text">
                 <span>
-                    <small class="text-muted">Topic:</small>
+                    <small class="text-muted">Topic(s):</small>
                 </span>
-                <input readonly type="text" class="form-control" value="{{ subscription.topic }}"/>
+                {{#each subscription.topics}}
+                <input readonly type="text" class="form-control" value="{{ this }}"/>
+                {{/each}}
             </div>
             <div class="card-text">
                 <span>
