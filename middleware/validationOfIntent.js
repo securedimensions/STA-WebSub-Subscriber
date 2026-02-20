@@ -70,7 +70,7 @@ const validationOfIntent = async (req, res, next) => {
   }
   res.locals.subscription = subscription;
 
-  if (res.locals.topic !== subscription.topic) {
+  if (subscription.topics.indexOf(res.locals.topic) < 0) {
     const error = 'topic and callback do not match';
     log.error(error);
     return res.status(404).type('text').send(error);

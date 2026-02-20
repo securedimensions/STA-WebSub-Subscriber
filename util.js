@@ -6,7 +6,10 @@ var crons = [];
 
 async function sendSubscription(subscription, method) {
     log.debug(`sending ${method} for: `, subscription.callback);
-    for (let topic of subscription.topics.split(',')) {
+    if(!Array.isArray(subscription.topics))
+      subscription.topics = [subscription.topics];
+
+    for (let topic of subscription.topics) {
       log.debug('sending request for topic: ', topic);
       request(config.hub_url, {
           method: 'POST',
